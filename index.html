@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Países</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css" integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Where in the World?</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fa-regular fa-moon"></i>
+            Dark Mode
+        </button>
+    </header>
+
+    <div id="mainView" class="mainView">
+        <div class="controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar país...">
+            </div>
+            <div class="filter-box">
+                <select id="region-select">
+                    <option value="all">Filtrar por Región</option>
+                    <option value="Africa">África</option>
+                    <option value="Americas">América</option>
+                    <option value="Asia">Asia</option>
+                    <option value="Europe">Europa</option>
+                    <option value="Oceania">Oceanía</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="countries-grid" id="countriesGrid">
+            <div class="loading">Cargando países...</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

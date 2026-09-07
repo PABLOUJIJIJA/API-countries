@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Países</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css" integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Where in the World?</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fa-regular fa-moon"></i>
+            Dark Mode
+        </button>
+    </header>
+
+    <div id="mainView" class="mainView">
+        <div class="controles">
+            <div class="button-div">
+                <a class="button-back" href="index.html">
+                    <i class="fa-solid fa-arrow-left-long"></i>
+                     Back
+                </a>
+            </div>
+        </div>
+        <div class="country-details" id="country-details">
+            Cargando datos...
+        </div>
+    </div>
+
+    <script src="detalle.js"></script>
+</body>
+</html>
