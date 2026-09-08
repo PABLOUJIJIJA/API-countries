@@ -47,6 +47,9 @@ header {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    right: 0;
 }
 
 header h1 {
@@ -72,7 +75,7 @@ header h1 {
     width: 100%;
     max-width: 1600px;
     margin: 0 auto;
-    min-height: calc(100vh-60px);
+    flex: 1;
 }
 
 /*MAIN CONTROLS SECTION*/
@@ -190,12 +193,7 @@ header h1 {
 
 /*  DETALLE SECTION */
 .controles {
-    padding: 0 0 3rem 0;
-}
-
-.card-details {
-    margin: auto 0;
-    width: 100%;
+    padding: 0 0 1rem 0;
 }
 
 .button-back {
@@ -210,7 +208,7 @@ header h1 {
     gap: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
     font-weight: 300;
-};
+}
 
 .country-details {
     padding: 0;
@@ -220,15 +218,19 @@ header h1 {
     flex: 1;
 }
 
+.card-details {
+    width: 100%;
+}
+
 .detail-container {
     display: flex;
     flex-direction: row;
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    justify-content: space-between;
+    justify-content: center;
     align-items: stretch;
-    gap: 8%;
+    gap: 3%;
 }
 
 .detail-container img {

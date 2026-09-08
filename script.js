@@ -5,6 +5,13 @@ const regionSelect = document.getElementById('region-select');
 const searchInput = document.getElementById('searchInput')
 
 let allCountries = [];
+let currentSearchTerm = '';
+let currentRegion = 'all';
+
+let offset = 0;
+let limit = 14;
+let isFetching = false;
+let hasMoreData = true;
 
 //Función para añadir la clase dark cuando es necesario
 document.addEventListener("DOMContentLoaded", () => {
@@ -28,50 +35,72 @@ function toggleTheme() {
     }
 };
 
-//Función para recoger los datos 
-async function fetchCountries() {
-    let limit = 100;
-    let offset = 1;
-    let hayMasData = true;
+ async function loadNextCountries() {
+    if (isFetching || !hasMoreData) return;
+    isFetching = true;
     try {
-        while (hayMasData) {
-            const url = `https://api.restcountries.com/countries/v5?limit=${limit}&offset=${offset}`;
-            const respuesta = await fetch(url, {
-                headers: { 'Authorization': 'Bearer rc_live_4a0f1a29aa0c43428d43fd783f4cb019'}
-            });
-
-            if (!respuesta.ok) {
-                throw new Error(`Error HTTp: ${respuesta.status}`)
-            }
-
-            const data = await respuesta.json();
-
-            const nuevosPaises = data.data.objects;
-
-            allCountries = [...allCountries,...nuevosPaises];
-
-            if (nuevosPaises.length < limit) {
-                hayMasData = false;
-            } else {
-                offset += limit;
-            }
+        let url = `https://api.restcountries.com/countries/v5?limit=${limit}&offset=${offset}`;
+        if(currentSearchTerm != ''){
+            url += `&q=${currentSearchTerm}`;
         }
 
-        showCountries(allCountries);
-    } catch (error) {
-        countriesGrid.innerHTML = `<p>Hubo un error al cargar los países. Revisa tu conexión de internet.</p>`;
-        console.error('Hubo un problema con la petición', error.message)
+        if (currentRegion != 'all') {
+            url += `&region=${currentRegion}`;
+        }
+
+        const respuesta = await fetch(url, {
+            headers: { 'Authorization': 'Bearer rc_live_be84d26617c14bab87287f0375e26925' }
+        });
+
+        if (!respuesta.ok) {
+            if (respuesta.status === 404){
+                hasMoreData = false;
+                return;
+            }
+
+            throw new Error(`Error HTTP: ${respuesta.status}`)
+        }
+
+        const data = await respuesta.json();
+        const nuevosPaises = data.data.objects;
+
+        const esPrimeraCarga = (offset === 0);
+
+        if(nuevosPaises.length < limit) {
+            hasMoreData = false;
+        } else {
+            offset += limit
+        }
+
+        showCountries(nuevosPaises,esPrimeraCarga)
+    } catch(error) {
+        console.error("Hubo un error al pedir los datos: ", error.message);
+    } finally {
+        isFetching = false;
     }
 }
 
-//Función para mostrar los datos
-function showCountries(data) {
-    console.log(data) //info
-    countriesGrid.innerHTML = '';
-    
-    data.forEach(country => {
+
+const observer = new IntersectionObserver((entries) => {
+    const ultimoElemento = entries[0];
+
+    if (ultimoElemento.isIntersecting) {
+        loadNextCountries();
+    }
+}, {
+    rootMargin: '100px',
+    threshold: 0.1
+});
+
+//Funcion para reiniciar la vista 
+function showCountries(paises, limpiarGrid = false) {
+    if(limpiarGrid){
+        countriesGrid.innerHTML = '';
+    };
+
+    paises.forEach(country => {
         const nombre = country.names?.common || 'Desconocido';
-        const bandera = country.flag?.url_svg || country.flag?.url_png || '';
+        const bandera = country.flag?.url_svg || country.flag?.url_png || 'mapamundi.jpg';
         const poblacion = country.population ? country.population.toLocaleString('en-US') : 'N/A';
         const region = country.region || 'N/A';
         const codigoPais = country.codes?.alpha_3 || '';
@@ -90,36 +119,57 @@ function showCountries(data) {
             </div>
         `
         card.addEventListener('click', () => {
+            if(codigoPais === '') {
+                alert(`Lo sentimos, la base de datos no tiene información detallada para ${nombre}.`);
+                return;
+            }
             window.open(`detalle.html?code=${codigoPais}`, '_blank');
         });
 
         countriesGrid.appendChild(card);
     });
+
+    const tarjetasActuales = document.querySelectorAll('.card');
+    if (tarjetasActuales.length > 0){
+        observer.disconnect();
+        observer.observe(tarjetasActuales[tarjetasActuales.length - 1])
+    }
 };
 
 //Función para seleccionar por regiones
 regionSelect.addEventListener('change', (e) => {
-    const region = e.target.value
+    currentRegion = e.target.value;
 
-    if (region === "all") {
-        showCountries(allCountries);
-    } else {
-        const filtered = allCountries.filter(country => country.region === region)
-        showCountries(filtered)
-    }
+    offset = 0;
+    hasMoreData = true;
+    countriesGrid.innerHTML = '';
+
+    loadNextCountries();
 });
+
+let debounceTimer;
 
 //Función para buscar países
 searchInput.addEventListener('input', (e) => {
-    const texto = e.target.value.toLowerCase();
+    clearTimeout(debounceTimer);
 
-    const filtered = allCountries.filter(country => {
-        const nombrePais = country.names?.common || '';
+    debounceTimer = setTimeout(async () => {
+        const texto = e.target.value.toLowerCase();
 
-        return nombrePais.toLowerCase().includes(texto);
-    });
-
-    showCountries(filtered)
+        if(texto === ''){
+            offset = 0;
+            hasMoreData = true;
+            currentSearchTerm = '';
+            countriesGrid.innerHTML = '';
+            loadNextCountries();
+        } else {
+            offset = 0;
+            hasMoreData = true;
+            currentSearchTerm = texto;
+            countriesGrid.innerHTML = '';
+            loadNextCountries();
+        }
+    }, 500)
 });
 
-fetchCountries()
+loadNextCountries()

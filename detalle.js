@@ -42,7 +42,7 @@ function toggleTheme() {
 async function searchCountrie(codeCountrie) {
     try {
         const respuesta = await fetch(`https://api.restcountries.com/countries/v5/codes.alpha_3/${codigoPais}`, {
-            headers: { 'Authorization': 'Bearer rc_live_4a0f1a29aa0c43428d43fd783f4cb019'}
+            headers: { 'Authorization': 'Bearer rc_live_be84d26617c14bab87287f0375e26925'}
         });
 
         if (!respuesta.ok) {
@@ -78,12 +78,12 @@ async function showCountry(country) {
     }
 
     let currencies = 'N/A'
-    if (country.currencies) {
+    if (country.currencies && country.currencies.length > 0) {
         currencies = Object.values(country.currencies).map(moneda => moneda.name).join(', ');
     }
 
     let lenguajes = "N/A"
-    if (country.languages) {
+    if (country.languages && country.languages.length > 0) {
         lenguajes = Object.values(country.languages).map(lenguaje => lenguaje.name).join(', ')
     }
 
@@ -91,7 +91,7 @@ async function showCountry(country) {
     if (country.borders && country.borders.length > 0) {
         const borderPromises = country.borders.map(async borderCode => {
             const respuesta = await fetch(`https://api.restcountries.com/countries/v5/codes.alpha_3/${borderCode}`, {
-                headers: { 'Authorization': 'Bearer rc_live_4a0f1a29aa0c43428d43fd783f4cb019'}
+                headers: { 'Authorization': 'Bearer rc_live_be84d26617c14bab87287f0375e26925'}
             });
 
             if (!respuesta.ok) {
