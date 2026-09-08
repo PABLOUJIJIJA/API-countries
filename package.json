@@ -1,0 +1,20 @@
+{
+  "name": "api-paises",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/PABLOUJIJIJA/API-countries#readme",
+  "bugs": {
+    "url": "https://github.com/PABLOUJIJIJA/API-countries/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PABLOUJIJIJA/API-countries.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "detalle.js",
+  "scripts": {
+    "serve": "npx serve ."
+  }
+}
