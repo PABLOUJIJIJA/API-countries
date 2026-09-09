@@ -3,6 +3,7 @@ const body = document.body
 const countriesGrid = document.getElementById('countriesGrid');
 const regionSelect = document.getElementById('region-select');
 const searchInput = document.getElementById('searchInput')
+const searchParams = new URLSearchParams(window.location.search)
 
 let allCountries = [];
 let currentSearchTerm = '';
@@ -35,9 +36,14 @@ function toggleTheme() {
     }
 };
 
- async function loadNextCountries() {
+async function loadNextCountries() {
     if (isFetching || !hasMoreData) return;
     isFetching = true;
+    //Spinner-Loader
+    let spinnerLoader = document.createElement('div');
+    spinnerLoader.classList.add('spinner-loader');
+    countriesGrid.appendChild(spinnerLoader);
+
     try {
         let url = `https://api.restcountries.com/countries/v5?limit=${limit}&offset=${offset}`;
         if(currentSearchTerm != ''){
@@ -53,11 +59,6 @@ function toggleTheme() {
         });
 
         if (!respuesta.ok) {
-            if (respuesta.status === 404){
-                hasMoreData = false;
-                return;
-            }
-
             throw new Error(`Error HTTP: ${respuesta.status}`)
         }
 
@@ -66,16 +67,25 @@ function toggleTheme() {
 
         const esPrimeraCarga = (offset === 0);
 
+        if (nuevosPaises.length === 0 && esPrimeraCarga) {
+            hasMoreData = false;
+            countriesGrid.innerHTML = '<p class="mensaje-error">No se encontraron países que coincidan con la busqueda</p>';
+            return;
+        }
+
         if(nuevosPaises.length < limit) {
             hasMoreData = false;
         } else {
-            offset += limit
+            offset += limit 
         }
 
         showCountries(nuevosPaises,esPrimeraCarga)
     } catch(error) {
         console.error("Hubo un error al pedir los datos: ", error.message);
     } finally {
+        if(countriesGrid.contains(spinnerLoader)){
+            spinnerLoader.remove()
+        }
         isFetching = false;
     }
 }
@@ -143,7 +153,8 @@ regionSelect.addEventListener('change', (e) => {
     offset = 0;
     hasMoreData = true;
     countriesGrid.innerHTML = '';
-
+    searchParams.set('region', `${currentRegion}`);
+    window.history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
     loadNextCountries();
 });
 
@@ -161,15 +172,30 @@ searchInput.addEventListener('input', (e) => {
             hasMoreData = true;
             currentSearchTerm = '';
             countriesGrid.innerHTML = '';
+            searchParams.delete('search');
+            window.history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
             loadNextCountries();
         } else {
             offset = 0;
             hasMoreData = true;
             currentSearchTerm = texto;
             countriesGrid.innerHTML = '';
+            searchParams.set('search', `${texto}`);
+            window.history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
             loadNextCountries();
         }
     }, 500)
 });
+
+//Search-params
+if(searchParams.has('search')){
+    currentSearchTerm = searchParams.get('search');
+    searchInput.value = currentSearchTerm
+}
+
+if(searchParams.has('region')) {
+    currentRegion = searchParams.get('region');
+    regionSelect.value = currentRegion;
+}
 
 loadNextCountries()
