@@ -2,7 +2,11 @@ const body = document.body
 
 const countryDetails = document.getElementById("country-details");
 const paramsString = window.location.search;
-const searchParams = new URLSearchParams(paramsString)
+const searchParams = new URLSearchParams(paramsString);
+
+const spinnerLoader = document.createElement('div');
+spinnerLoader.classList.add('spinner-loader');
+countryDetails.appendChild(spinnerLoader);
 
 const codigoPais = searchParams.get("code");
 
@@ -149,5 +153,6 @@ async function showCountry(country) {
     countryDetails.innerHTML = '';
     countryDetails.appendChild(card);
 };
+
 
 searchCountrie(codigoPais)

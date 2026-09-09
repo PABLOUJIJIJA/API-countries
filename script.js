@@ -3,7 +3,9 @@ const body = document.body
 const countriesGrid = document.getElementById('countriesGrid');
 const regionSelect = document.getElementById('region-select');
 const searchInput = document.getElementById('searchInput')
-const searchParams = new URLSearchParams(window.location.search)
+const searchParams = new URLSearchParams(window.location.search);
+const divButtonTop = document.getElementById('div-buttonTop')
+const buttonTop = document.getElementById('buttonTop');
 
 let allCountries = [];
 let currentSearchTerm = '';
@@ -154,7 +156,7 @@ regionSelect.addEventListener('change', (e) => {
     hasMoreData = true;
     countriesGrid.innerHTML = '';
     searchParams.set('region', `${currentRegion}`);
-    window.history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
+    history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
     loadNextCountries();
 });
 
@@ -168,24 +170,34 @@ searchInput.addEventListener('input', (e) => {
         const texto = e.target.value.toLowerCase();
 
         if(texto === ''){
-            offset = 0;
-            hasMoreData = true;
             currentSearchTerm = '';
-            countriesGrid.innerHTML = '';
             searchParams.delete('search');
-            window.history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
-            loadNextCountries();
+            history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
         } else {
-            offset = 0;
-            hasMoreData = true;
             currentSearchTerm = texto;
-            countriesGrid.innerHTML = '';
             searchParams.set('search', `${texto}`);
-            window.history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
-            loadNextCountries();
+            history.replaceState({},"",`${window.location.pathname}?${searchParams}`)
         }
+
+        offset = 0;
+        hasMoreData = true;
+        countriesGrid.innerHTML = '';
+        loadNextCountries();
     }, 500)
 });
+
+//Evento scroll
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 700){
+        divButtonTop.classList.add('opacity')
+    } else {
+        divButtonTop.classList.remove('opacity')
+    }
+});
+//Funcion boton VOLVER ARRIBA  
+buttonTop.addEventListener('click', () => {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+})
 
 //Search-params
 if(searchParams.has('search')){

@@ -9,11 +9,13 @@
 </head>
 <body>
     <header>
-        <h1>Where in the World?</h1>
-        <button class="theme-toggle" onclick="toggleTheme()">
-            <i class="fa-regular fa-moon"></i>
-            Dark Mode
-        </button>
+        <div class="header-container">
+            <h1>Where in the World?</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fa-regular fa-moon"></i>
+                Dark Mode
+            </button>
+        </div>
     </header>
 
     <div id="mainView" class="mainView">
@@ -36,6 +38,12 @@
 
         <div class="countries-grid" id="countriesGrid">
             <div class="loading">Cargando países...</div>
+        </div>
+
+        <div class="div-buttonTop" id="div-buttonTop">
+            <button class="buttonTop" id="buttonTop">
+                <i class="fa-solid fa-arrow-up-long"></i>
+            </button>
         </div>
     </div>
 
